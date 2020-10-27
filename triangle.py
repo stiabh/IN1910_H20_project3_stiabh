@@ -44,3 +44,9 @@ X[0] = x
 for i in range(n-1):
     j = np.random.randint(3)
     X[i+1] = (X[i] + c[j])/2
+
+# Plot points in X:
+plt.scatter(*zip(*X), s=1, marker=".")
+plt.axis("equal")
+plt.axis("off")
+plt.show()
