@@ -15,3 +15,18 @@ corners = [c0, c1, c2]
 # Plot corners to confirm triangle is equilateral:
 plt.scatter(*zip(*corners))
 plt.show()
+
+w = np.random.random(3)            # random weights
+w = 1/sum(w)*w                     # weights sum to 1
+X = w[0]*c0 + w[1]*c1 + w[2]*c2    # starting point as a lin.comb. of w
+
+# Plot 1000 random points within triangle:
+n = 1000
+rand_points = np.empty(shape=(n, 2))
+
+for i in range(len(rand_points)):
+    w = np.random.random(3)
+    w = 1/sum(w)*w
+    rand_points[i] = w[0]*c0 + w[1]*c1 + w[2]*c2
+    
+plt.scatter(*zip(*rand_points), color="r")
