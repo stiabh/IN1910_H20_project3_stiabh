@@ -33,6 +33,28 @@ class ChaosGame():
             X0 = np.add(X0, w[i]*self.corners[i])
         return X0
 
+    def iterate(self, steps, discard=5):
+        """Generate a number of points using chaos game algorithm."""
+        n, r, c = self.n, self.r, self.corners
+        x = self._starting_point()
+
+        # Discard points:
+        for i in range(discard+1):
+            j = np.random.randint(n)
+            x = r*x + (1-r)*c[j]
+
+        # Save "steps" next points:
+        X = np.empty(shape=(steps, 2))
+        J = np.empty(steps)
+        X[0], J[0] = x, j
+
+        for i in range(steps-1):
+            j = np.random.randint(3)
+            X[i+1] = r*X[i] + (1-r)*c[j]
+            J[i+1] = j
+
+        self.X, self.J = X, J
+
     def plot_ngon(self):
         """Plot n-gon corners."""
         plt.figure()
