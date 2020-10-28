@@ -24,6 +24,15 @@ class ChaosGame():
         corners[0], corners[1] = np.sin(theta), np.cos(theta)
         self.corners = np.transpose(corners)
 
+    def _starting_point(self):
+        """Return random starting point within n-gon."""
+        w = np.random.random(self.n)
+        w = 1/np.sum(w)*w
+        X0 = np.zeros(2)
+        for i in range(self.n):
+            X0 = np.add(X0, w[i]*self.corners[i])
+        return X0
+
     def plot_ngon(self):
         """Plot n-gon corners."""
         plt.figure()
@@ -32,7 +41,16 @@ class ChaosGame():
 
 
 if __name__ == "__main__":
-    for n in range(3, 9):
-        cg = ChaosGame(n)
-        cg.plot_ngon()
+    # for n in range(3, 9):
+    # cg = ChaosGame(n)
+    # cg.plot_ngon()
+    # plt.show()
+
+    cg = ChaosGame(5)
+    p = 1000
+    X = np.empty(shape=(p, 2))
+    for i in range(p):
+        X[i] = cg._starting_point()
+    cg.plot_ngon()
+    plt.scatter(*zip(*X), c="r")
     plt.show()
