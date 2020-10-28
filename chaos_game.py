@@ -67,7 +67,7 @@ class ChaosGame():
             raise AttributeError("Method iterate has not been called")
 
         if color == True:
-            colors = self.J
+            colors = self.gradient_color
         else:
             colors = "black"
         plt.figure()
@@ -78,6 +78,15 @@ class ChaosGame():
     def show(self, color=False, cmap="jet"):
         self.plot(color, cmap)
         plt.show()
+
+    @property
+    def gradient_color(self):
+        C = np.empty(len(self.J))
+        C[0] = self.J[0]
+        for i in range(len(C)-1):
+            C[i+1] = (C[i] + self.J[i+1])/2
+        return C
+
 
 
 if __name__ == "__main__":
