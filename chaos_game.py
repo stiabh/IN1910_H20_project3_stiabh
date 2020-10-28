@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-plt.ion()   # force interactive plots
 
 
 class ChaosGame():
@@ -70,6 +69,7 @@ class ChaosGame():
             colors = self.gradient_color
         else:
             colors = "black"
+
         plt.figure()
         plt.scatter(*zip(*self.X), c=colors, cmap=cmap, s=1.5, marker=".")
         plt.axis("equal")
@@ -79,6 +79,18 @@ class ChaosGame():
         self.plot(color, cmap)
         plt.show()
 
+    def savepng(self, outfile, color=False, cmap="jet"):
+        """Save a png file of plot produced by method plot."""
+        if "." in outfile:
+            ext = outfile.split(".")[-1]
+            if not ext == "png":
+                raise TypeError("Plot has to be saved as .png")
+        else:
+            outfile = outfile + ".png"
+            
+        self.plot(color, cmap)
+        plt.savefig(outfile, dpi=300)
+
     @property
     def gradient_color(self):
         C = np.empty(len(self.J))
@@ -86,7 +98,6 @@ class ChaosGame():
         for i in range(len(C)-1):
             C[i+1] = (C[i] + self.J[i+1])/2
         return C
-
 
 
 if __name__ == "__main__":
