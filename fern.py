@@ -16,6 +16,7 @@ class AffineTransform():
 
 
 def random_func(functions, p_cumulative):
+    """Pick random function based on cumulative probabilities."""
     r = np.random.random()
     for j, p in enumerate(p_cumulative):
         if r < p:
@@ -38,3 +39,11 @@ if __name__ == "__main__":
     assert np.sum(barnsley_prob) == 1
 
     p_cumulative = np.cumsum(barnsley_prob)
+
+    # Iterating the Fern:
+    n = 50000
+    X = np.zeros(shape=(n, 2))
+
+    for i in range(n-1):
+        f = random_func(functions, p_cumulative)
+        X[i+1] = f(X[i])
