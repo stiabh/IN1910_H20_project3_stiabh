@@ -47,3 +47,8 @@ if __name__ == "__main__":
     for i in range(n-1):
         f = random_func(functions, p_cumulative)
         X[i+1] = f(X[i])
+
+    plt.scatter(*zip(*X), c="forestgreen", s=0.01, marker=".")
+    plt.axis("equal")
+    plt.axis("off")
+    plt.savefig("figures\\barnsley_fern.png", dpi=300)
