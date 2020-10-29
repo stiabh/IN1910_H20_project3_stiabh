@@ -29,9 +29,7 @@ if __name__ == "__main__":
                 (0.20, -0.26, 0.23, 0.22, 0, 1.60),
                 (-0.15, 0.28, 0.26, 0.24, 0, 0.44)]
 
-    functions = []
-    for args in barnsley:
-        functions.append(AffineTransform(*args))
+    functions = [AffineTransform(*args) for args in barnsley]
 
     # Barnsley probablities:
     barnsley_prob = (0.01, 0.85, 0.07, 0.07)
