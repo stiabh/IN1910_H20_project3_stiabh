@@ -29,7 +29,7 @@ class ChaosGame():
         w = 1/np.sum(w)*w
         X0 = np.zeros(2)
         for i in range(self.n):
-            X0 = np.add(X0, w[i]*self.corners[i])
+            X0 += w[i]*self.corners[i]
         return X0
 
     def iterate(self, steps, discard=5):
@@ -48,7 +48,7 @@ class ChaosGame():
         X[0], J[0] = x, j
 
         for i in range(steps-1):
-            j = np.random.randint(3)
+            j = np.random.randint(n)
             X[i+1] = r*X[i] + (1-r)*c[j]
             J[i+1] = j
 
@@ -87,7 +87,7 @@ class ChaosGame():
                 raise TypeError("Plot has to be saved as .png")
         else:
             outfile = outfile + ".png"
-            
+
         self.plot(color, cmap)
         plt.savefig(outfile, dpi=300)
 
@@ -115,7 +115,16 @@ if __name__ == "__main__":
     # plt.scatter(*zip(*X), c="r")
     # plt.show()
 
-    cg = ChaosGame(3, 0.5)
-    cg.iterate(10000)
-    cg.show()
-    cg.show(color=True)
+    # cg = ChaosGame(4, 0.5)
+    # cg.iterate(10000)
+    # cg.show()
+    # cg.show(color=True)
+
+    N = [3, 4, 5, 5, 6]
+    R = [1/2, 1/3, 1/3, 3/8, 1/3]
+
+    for i in range(len(N)):
+        filename = "chaos" + str(i+1) + ".png"
+        cg = ChaosGame(N[i], R[i])
+        cg.iterate(10000)
+        cg.savepng("figures\\" + filename, color=True)
