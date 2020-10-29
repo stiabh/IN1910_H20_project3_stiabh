@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import pi, cos, sin, arctan2, sqrt
 import matplotlib.pyplot as plt
+from chaos_game import *
 
 
 class Variations():
@@ -10,6 +11,10 @@ class Variations():
 
     def transform(self):
         return self._func(self.x, self.y)
+
+    @classmethod
+    def from_chaos_game(cls, chaos_game, name):
+        return cls(*np.transpose(chaos_game.X), name)
 
     @staticmethod
     def linear(x, y):
@@ -57,6 +62,10 @@ class Variations():
         return 2/(r + 1)*y, 2/(r + 1)*x
 
 if __name__ == "__main__":
+    cg = ChaosGame(3, 0.5)
+    cg.iterate(10000)
+    colors = cg.gradient_color
+
     N = 100
     grid_values = np.linspace(-1, 1, N)
     x, y = np.meshgrid(grid_values, grid_values)
@@ -65,17 +74,20 @@ if __name__ == "__main__":
 
     # transformations = ["linear", "handkerchief", "swirl", "disc"]
     transformations = ["horseshoe", "diamond", "ex", "fisheye"]
-    variations = [Variations(x_values, y_values, name) 
+    # variations = [Variations(x_values, y_values, name) 
+    #               for name in transformations]
+    variations = [Variations.from_chaos_game(cg, name) 
                   for name in transformations]
 
     fig, axs = plt.subplots(2, 2, figsize=(9, 9))
     for i, (ax, variation) in enumerate(zip(axs.flatten(), variations)):
         u, v = variation.transform()
         
-        ax.plot(u, -v, markersize=0.5, marker=".", linestyle="", color="k")
+        # ax.plot(u, -v, markersize=0.5, marker=".", linestyle="", c=colors)
+        ax.scatter(u, -v, s=0.2, marker=".", c=colors)
         ax.set_title(variation.name)
         ax.axis("equal")
         ax.axis("off")
 
-    fig.savefig("figures/variations_4b.png", dpi=300)
+    # fig.savefig("figures/variations_4b.png", dpi=300)
     plt.show()
