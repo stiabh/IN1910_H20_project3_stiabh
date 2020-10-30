@@ -10,7 +10,7 @@ class Variations():
         self._func = getattr(Variations, name)
 
     def transform(self):
-        return self._func(self.x, self.y)
+        return np.array(self._func(self.x, self.y))
 
     @classmethod
     def from_chaos_game(cls, chaos_game, name):
@@ -80,6 +80,14 @@ if __name__ == "__main__":
             ax.axis("equal")
             ax.axis("off")
 
+    def linear_combination_wrap(V1, V2):
+        """Return function """
+        def lin_comb(w):
+            if w < 0 or w > 1:
+                raise ValueError("w must be a value between 0 and 1")
+            return w*V1.transform() + (1-w)*V2.transform()
+        return lin_comb
+
     def subplot_variations(transformations):
         """Plot figure with four variations."""
         x_values, y_values = _xy_grid()
@@ -92,17 +100,38 @@ if __name__ == "__main__":
         """Plot chaos game output transformed using 4 variations."""
         x_values, y_values = _xy_grid()
 
-        cg = ChaosGame(n, r)
-        cg.iterate(10000)
-        colors = cg.gradient_color
+        ngon = ChaosGame(n, r)
+        ngon.iterate(10000)
+        colors = ngon.gradient_color
 
-        variations = [Variations.from_chaos_game(cg, name)
+        variations = [Variations.from_chaos_game(ngon, name)
                       for name in transformations]
         _plot_transformations(variations, color=colors)
 
-    transformations = ["linear", "handkerchief", "swirl", "disc"]
-    # transformations = ["horseshoe", "diamond", "ex", "fisheye"]
-    subplot_variations(transformations)
-    # fig.savefig("figures/variations_4b.png", dpi=300)
-    subplot_variations_chaos_game(transformations, 6, 1/3)
+
+    # transformations = ["linear", "handkerchief", "swirl", "disc"]
+    # # transformations = ["horseshoe", "diamond", "ex", "fisheye"]
+    # subplot_variations(transformations)
+    # # fig.savefig("figures/variations_4b.png", dpi=300)
+    # subplot_variations_chaos_game(transformations, 6, 1/3)
+    # plt.show()
+
+    coeffs = np.linspace(0, 1, 4)
+    ngon = ChaosGame(3, 0.5)   
+    ngon.iterate(10000)
+    n_color = ngon.gradient_color
+
+    variation1 = Variations.from_chaos_game(ngon, "disc")
+    variation2 = Variations.from_chaos_game(ngon, "linear")
+
+    variation12 = linear_combination_wrap(variation1, variation2)    
+        
+    fig, axs = plt.subplots(2, 2, figsize=(9, 9))
+    for ax, w in zip(axs.flatten(), coeffs):
+        u, v = variation12(w)
+        
+        ax.scatter(u, -v, s=0.2, marker=".", c=n_color)
+        ax.set_title(f"w = {w:.2f}")
+        ax.axis("equal")
+        ax.axis("off")
     plt.show()
