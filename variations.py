@@ -61,33 +61,48 @@ class Variations():
         r = sqrt(x**2 + y**2)
         return 2/(r + 1)*y, 2/(r + 1)*x
 
+
 if __name__ == "__main__":
-    cg = ChaosGame(3, 0.5)
-    cg.iterate(10000)
-    colors = cg.gradient_color
+    def _xy_grid(N=100):
+        """Output flattened xy-grid."""
+        grid_values = np.linspace(-1, 1, N)
+        x, y = np.meshgrid(grid_values, grid_values)
+        return x.flatten(), y.flatten()
 
-    N = 100
-    grid_values = np.linspace(-1, 1, N)
-    x, y = np.meshgrid(grid_values, grid_values)
-    x_values = x.flatten()
-    y_values = y.flatten()
+    def _plot_transformations(variations, color="k"):
+        """Plot given variations in chosen colors."""
+        fig, axs = plt.subplots(2, 2, figsize=(9, 9))
 
-    # transformations = ["linear", "handkerchief", "swirl", "disc"]
-    transformations = ["horseshoe", "diamond", "ex", "fisheye"]
-    # variations = [Variations(x_values, y_values, name) 
-    #               for name in transformations]
-    variations = [Variations.from_chaos_game(cg, name) 
-                  for name in transformations]
+        for i, (ax, variation) in enumerate(zip(axs.flatten(), variations)):
+            u, v = variation.transform()
+            ax.scatter(u, -v, s=0.2, marker=".", c=color)
+            ax.set_title(variation.name)
+            ax.axis("equal")
+            ax.axis("off")
 
-    fig, axs = plt.subplots(2, 2, figsize=(9, 9))
-    for i, (ax, variation) in enumerate(zip(axs.flatten(), variations)):
-        u, v = variation.transform()
-        
-        # ax.plot(u, -v, markersize=0.5, marker=".", linestyle="", c=colors)
-        ax.scatter(u, -v, s=0.2, marker=".", c=colors)
-        ax.set_title(variation.name)
-        ax.axis("equal")
-        ax.axis("off")
+    def subplot_variations(transformations):
+        """Plot figure with four variations."""
+        x_values, y_values = _xy_grid()
 
+        variations = [Variations(x_values, y_values, name)
+                      for name in transformations]
+        _plot_transformations(variations)
+
+    def subplot_variations_chaos_game(transformations, n=3, r=0.5):
+        """Plot chaos game output transformed using 4 variations."""
+        x_values, y_values = _xy_grid()
+
+        cg = ChaosGame(n, r)
+        cg.iterate(10000)
+        colors = cg.gradient_color
+
+        variations = [Variations.from_chaos_game(cg, name)
+                      for name in transformations]
+        _plot_transformations(variations, color=colors)
+
+    transformations = ["linear", "handkerchief", "swirl", "disc"]
+    # transformations = ["horseshoe", "diamond", "ex", "fisheye"]
+    subplot_variations(transformations)
     # fig.savefig("figures/variations_4b.png", dpi=300)
+    subplot_variations_chaos_game(transformations, 6, 1/3)
     plt.show()
