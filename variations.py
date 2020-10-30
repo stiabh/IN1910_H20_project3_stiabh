@@ -2,6 +2,8 @@ import numpy as np
 from numpy import pi, cos, sin, arctan2, sqrt
 import matplotlib.pyplot as plt
 from chaos_game import *
+from matplotlib.animation import FuncAnimation
+import time
 
 
 class Variations():
@@ -63,7 +65,7 @@ class Variations():
 
 
 if __name__ == "__main__":
-    def _xy_grid(N=100):
+    def _xy_grid(N=50):
         """Output flattened xy-grid."""
         grid_values = np.linspace(-1, 1, N)
         x, y = np.meshgrid(grid_values, grid_values)
@@ -108,7 +110,6 @@ if __name__ == "__main__":
                       for name in transformations]
         _plot_transformations(variations, color=colors)
 
-
     # transformations = ["linear", "handkerchief", "swirl", "disc"]
     # # transformations = ["horseshoe", "diamond", "ex", "fisheye"]
     # subplot_variations(transformations)
@@ -118,20 +119,32 @@ if __name__ == "__main__":
 
     coeffs = np.linspace(0, 1, 4)
     ngon = ChaosGame(3, 0.5)   
-    ngon.iterate(10000)
+    ngon.iterate(1000)
     n_color = ngon.gradient_color
 
     variation1 = Variations.from_chaos_game(ngon, "disc")
     variation2 = Variations.from_chaos_game(ngon, "linear")
 
     variation12 = linear_combination_wrap(variation1, variation2)    
-        
-    fig, axs = plt.subplots(2, 2, figsize=(9, 9))
-    for ax, w in zip(axs.flatten(), coeffs):
+    
+    u, v = variation12(0)
+    fps = 60
+    trim = 1
+
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.set(xlim=(-1, 1), ylim=(-1, 1))
+    ax.axis("off")
+    scat = ax.scatter(u[::trim], -v[::trim], s=20 , 
+                      marker=".", c=n_color[::trim])
+    def animate(i):
+        # i: [0, frames)
+        if i < fps/2:
+            w = 2*(i/fps)
+        else:
+            w = 2*(1-i/fps)
         u, v = variation12(w)
-        
-        ax.scatter(u, -v, s=0.2, marker=".", c=n_color)
-        ax.set_title(f"w = {w:.2f}")
-        ax.axis("equal")
-        ax.axis("off")
+        scat.set_offsets(np.c_[u[::trim], -v[::trim]])
+
+    anim = FuncAnimation(fig, animate, interval=1/fps*2000,
+                         frames=fps, repeat=True)
     plt.show()
