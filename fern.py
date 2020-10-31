@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 
 class AffineTransform():
     def __init__(self, a=0, b=0, c=0, d=0, e=0, f=0):
+        """Define affine transformation f([x, y]) = A*[x, y] + [e, f].
+
+        Args:
+            a, b, c, d: Indices of transformation matrix A = [[a, b], [c, d]].
+            e, f: Indices of offset vector [e, f].
+        """
         self.a, self.b, self.c, self.d, self.e, self.f = a, b, c, d, e, f
 
     def __call__(self, point):
@@ -29,13 +35,13 @@ if __name__ == "__main__":
                 (0.20, -0.26, 0.23, 0.22, 0, 1.60),
                 (-0.15, 0.28, 0.26, 0.24, 0, 0.44)]
 
-    functions = [AffineTransform(*args) for args in barnsley]
+    functions = [AffineTransform(*params) for params in barnsley]
 
     # Barnsley probablities:
-    barnsley_prob = (0.01, 0.85, 0.07, 0.07)
-    # Verify that probabilities sum to 1:
-    assert np.sum(barnsley_prob) == 1
+    barnsley_prob = 0.01, 0.85, 0.07, 0.07
 
+    # Verify that probabilities sum to 1, and calculate cumulative prob.:
+    assert np.sum(barnsley_prob) == 1
     p_cumulative = np.cumsum(barnsley_prob)
 
     # Iterating the Fern:

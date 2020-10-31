@@ -6,10 +6,14 @@ import pytest
 @pytest.mark.parametrize(
     "n, r",
     [
-        ("str", 0.5),   # n not an integer
-        (4, 2),         # r not a floating-point number
-        (1, 0.2),       # n < 3
-        (3, 2.5)        # r >= 1
+        # n not an integer:
+        ("str", 0.5),
+        # r not a floating-point number:
+        (4, 2),
+        # n < 3:
+        (1, 0.2),
+        # r >= 1:
+        (3, 2.5)
     ],
 )
 def test_ChaosGame_params(n, r):

@@ -3,21 +3,25 @@ from numpy import pi, cos, sin, arctan2, sqrt
 import matplotlib.pyplot as plt
 from chaos_game import *
 from matplotlib.animation import FuncAnimation
-import time
 
 
 class Variations():
     def __init__(self, x, y, name):
+        """Define chosen transformation."""
         self.x, self.y, self.name = x, y, name
         self._func = getattr(Variations, name)
 
     def transform(self):
+        """Output (x, y)-points after chosen transformation."""
         return np.array(self._func(self.x, self.y))
 
     @classmethod
     def from_chaos_game(cls, chaos_game, name):
+        """Enable support for Chaos Game algorithm outputs."""
         return cls(*np.transpose(chaos_game.X), name)
 
+    # The following transformations are adapted from the article
+    # "The Fractal Flame Algorithm" (Draves, Reckase, 2008):
     @staticmethod
     def linear(x, y):
         return x, y
@@ -83,7 +87,7 @@ if __name__ == "__main__":
             ax.axis("off")
 
     def linear_combination_wrap(V1, V2):
-        """Return function """
+        """Return linear combination function."""
         def lin_comb(w):
             if w < 0 or w > 1:
                 raise ValueError("w must be a value between 0 and 1")
@@ -117,16 +121,17 @@ if __name__ == "__main__":
     # subplot_variations_chaos_game(transformations, 6, 1/3)
     # plt.show()
 
+    # Working example of linear combination animation:
     coeffs = np.linspace(0, 1, 4)
-    ngon = ChaosGame(3, 0.5)   
+    ngon = ChaosGame(3, 0.5)
     ngon.iterate(1000)
     n_color = ngon.gradient_color
 
     variation1 = Variations.from_chaos_game(ngon, "disc")
     variation2 = Variations.from_chaos_game(ngon, "linear")
 
-    variation12 = linear_combination_wrap(variation1, variation2)    
-    
+    variation12 = linear_combination_wrap(variation1, variation2)
+
     u, v = variation12(0)
     fps = 60
     trim = 1
@@ -134,8 +139,9 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.set(xlim=(-1, 1), ylim=(-1, 1))
     ax.axis("off")
-    scat = ax.scatter(u[::trim], -v[::trim], s=20 , 
+    scat = ax.scatter(u[::trim], -v[::trim], s=20,
                       marker=".", c=n_color[::trim])
+
     def animate(i):
         # i: [0, frames)
         if i < fps/2:
@@ -147,4 +153,5 @@ if __name__ == "__main__":
 
     anim = FuncAnimation(fig, animate, interval=1/fps*2000,
                          frames=fps, repeat=True)
+    # anim.save("lin_comb_animation.mp4")
     plt.show()

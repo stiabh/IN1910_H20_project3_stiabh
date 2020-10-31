@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 class ChaosGame():
     def __init__(self, n, r=0.5):
+        """Initialize n-gon to be used in Chaos Game algorithm."""
         if not isinstance(n, int):
             raise ValueError("n must be an integer")
         if not isinstance(r, float):
@@ -17,7 +18,7 @@ class ChaosGame():
         self._generate_ngon()
 
     def _generate_ngon(self):
-        """Generate corners of n-gon."""
+        """Generate n-gon vertices."""
         theta = np.linspace(0, 2*np.pi, self.n, endpoint=False)
         corners = np.empty(shape=(2, self.n))
         corners[0], corners[1] = np.sin(theta), np.cos(theta)
@@ -33,7 +34,7 @@ class ChaosGame():
         return X0
 
     def iterate(self, steps, discard=5):
-        """Generate a number of points using chaos game algorithm."""
+        """Generate a number of points using Chaos Game algorithm."""
         n, r, c = self.n, self.r, self.corners
         x = self._starting_point()
 
